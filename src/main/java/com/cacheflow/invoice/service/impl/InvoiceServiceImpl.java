@@ -113,7 +113,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             customer = new Customer();
             customer.setEmail(invoiceRequest.getCustomerEmail());
             customer.setFirstName(invoiceRequest.getCustomerName());
-            //customer = customerRepository.save(customer);
         }
         invoice.setDescription(invoiceRequest.getDescription());
         invoice.setDueDate(invoiceRequest.getDueDate());

@@ -23,12 +23,12 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/invoices")
+    @GetMapping("/get")
     public ResponseEntity<List<Customer>> getCustomers() {
         return ResponseEntity.ok(customerService.getCustomers());
     }
 
-    @GetMapping("/invoice/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable("id") Long customerId) {
         // passing ID directly for this exercise. Would usually take the customer id from the user session and also use UUID for entity ID's instead of Long
         return ResponseEntity.ok(customerService.getCustomerById(customerId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer id: " + customerId + " not found")));
