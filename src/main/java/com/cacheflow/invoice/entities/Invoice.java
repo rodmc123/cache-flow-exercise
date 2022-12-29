@@ -35,6 +35,7 @@ public class Invoice extends BaseEntity {
     @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "id")
     private Customer customer;
     @OneToMany(cascade=CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Set<Item> items = new HashSet<>();
     @Column(name = "total")

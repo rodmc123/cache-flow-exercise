@@ -13,7 +13,6 @@ import com.cacheflow.invoice.request.InvoiceStatusUpdateRequest;
 import com.cacheflow.invoice.request.LineItemRequest;
 import com.cacheflow.invoice.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.history.Revision;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +87,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             product.setModel(itemRequest.getModel());
             product.setSerialNumber(itemRequest.getSerialNumber());
             item.setProduct(product);
-            item.setInvoiceId(invoiceId);
             return item;
         }).collect(Collectors.toList());
     }

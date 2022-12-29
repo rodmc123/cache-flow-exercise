@@ -21,6 +21,4 @@ public class Item extends BaseEntity {
     private Product product;
     @Column(name = "quantity")
     private Integer quantity;
-    @Column(name = "invoice_id")
-    private Long invoiceId;
 }
