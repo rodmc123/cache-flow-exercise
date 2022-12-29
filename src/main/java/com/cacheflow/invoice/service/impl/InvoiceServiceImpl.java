@@ -8,6 +8,7 @@ import com.cacheflow.invoice.enums.InvoiceStatus;
 import com.cacheflow.invoice.exception.BadRequestException;
 import com.cacheflow.invoice.repository.CustomerRepository;
 import com.cacheflow.invoice.repository.InvoiceRepository;
+import com.cacheflow.invoice.repository.ProductRepository;
 import com.cacheflow.invoice.request.InvoiceRequest;
 import com.cacheflow.invoice.request.InvoiceStatusUpdateRequest;
 import com.cacheflow.invoice.request.LineItemRequest;
@@ -30,11 +31,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, CustomerRepository customerRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
         this.invoiceRepository = invoiceRepository;
         this.customerRepository = customerRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -77,15 +80,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     private List<Item> convertRequestToItems(List<LineItemRequest.ItemRequest> itemsToAdd, Long invoiceId) {
        return itemsToAdd.stream().map(itemRequest -> {
             Item item = new Item();
-            Product product = new Product();
+            // check if product being added as part of the request already exist
+            Product product = productRepository.findProductByModelAndSerialNumber(itemRequest.getModel(), itemRequest.getSerialNumber());
+            if (product == null) {
+                product = new Product();
+                product.setTotal(itemRequest.getTotal());
+                product.setDescription(itemRequest.getDescription());
+                product.setManufacturer(itemRequest.getManufacturer());
+                product.setCountryOfOrigin(itemRequest.getCountryOfOrigin());
+                // model and serial number are unique fields to avid creating the same product multiple times
+                product.setModel(itemRequest.getModel());
+                product.setSerialNumber(itemRequest.getSerialNumber());
+            }
             item.setQuantity(itemRequest.getQuantity());
-            product.setTotal(itemRequest.getTotal());
-            product.setDescription(itemRequest.getDescription());
-            product.setManufacturer(itemRequest.getManufacturer());
-            product.setCountryOfOrigin(itemRequest.getCountryOfOrigin());
-            // model and serial number are unique fields to avid creating the same product multiple times
-            product.setModel(itemRequest.getModel());
-            product.setSerialNumber(itemRequest.getSerialNumber());
             item.setProduct(product);
             return item;
         }).collect(Collectors.toList());
